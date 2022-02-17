@@ -12,10 +12,11 @@ import org.mockito.kotlin.whenever
 import petros.efthymiou.groovy.utils.BaseUnitTest
 import petros.efthymiou.groovy.utils.getValueForTest
 
-class PlaylistViewModelShould: BaseUnitTest() {
+class PlaylistViewModelShould : BaseUnitTest() {
     private val repository: PlaylistRepository = mock()
     private val playlists = mock<List<Playlist>>()
     private val expected = Result.success(playlists)
+    private val exception = RuntimeException("Something went wrong")
 
     @Test
     fun getPlaylistsFromRepository() = runBlockingTest {
@@ -30,6 +31,18 @@ class PlaylistViewModelShould: BaseUnitTest() {
         val viewModel = mockSuccessfulCase()
 
         assertEquals(expected, viewModel.playlists.getValueForTest())
+    }
+
+    @Test
+    fun emitErrorWhenReceiveError() {
+        runBlockingTest {
+            whenever(repository.getPlayLists()).thenReturn(flow {
+                emit(Result.failure(exception))
+            })
+        }
+        val viewModel = PlaylistViewModel(repository)
+
+        assertEquals(exception, viewModel.playlists.getValueForTest()?.exceptionOrNull())
     }
 
     // 테스트 대상을 제외한 것들은 모두 mock
