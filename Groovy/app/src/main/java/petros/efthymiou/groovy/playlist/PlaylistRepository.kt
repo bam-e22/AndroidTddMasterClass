@@ -2,8 +2,10 @@ package petros.efthymiou.groovy.playlist
 
 import kotlinx.coroutines.flow.Flow
 
-class PlaylistRepository {
+class PlaylistRepository(
+    private val service: PlaylistService
+) {
     suspend fun getPlayLists(): Flow<Result<List<Playlist>>> {
-        TODO("Not yet implemented")
+        return service.fetchPlaylists()
     }
 }
