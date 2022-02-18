@@ -19,7 +19,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class PlayListFeature {
+class aPlayListFeature {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -42,7 +42,7 @@ class PlayListFeature {
             .check(matches(isDisplayed()))
 
         onView(allOf(withId(R.id.playlist_image), isDescendantOfA(nthChildOf(withId(R.id.playlists_list), 0))))
-            .check(matches(withDrawable(R.mipmap.playlist)))
+            .check(matches(withDrawable(R.drawable.playlist)))
             .check(matches(isDisplayed()))
 
     }

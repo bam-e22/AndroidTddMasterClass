@@ -1,5 +1,6 @@
 package petros.efthymiou.groovy.playlist
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -8,10 +9,14 @@ class PlaylistService(
     private val api: PlaylistApi
 ) {
     suspend fun fetchPlaylists(): Flow<Result<List<Playlist>>> {
+        Log.d("COURSE", "fetchPlaylists")
         return flow {
-            emit(Result.success(api.fetchAllPlayLists()))
-         }.catch {
-             emit(Result.failure(RuntimeException("Something went wrong")))
+            val result = api.fetchAllPlayLists()
+            Log.d("COURSE", "api result= $result")
+            emit(Result.success(result))
+        }.catch {
+            Log.d("COURSE", "error occurred $it")
+            emit(Result.failure(RuntimeException("Something went wrong")))
         }
     }
 }

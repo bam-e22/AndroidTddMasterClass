@@ -32,7 +32,7 @@ class MyPlaylistRecyclerViewAdapter(
         fun bind(playlist: Playlist) {
             binding.playlistName.text = playlist.name
             binding.playlistCategory.text = playlist.category
-            binding.playlistImage.setImageDrawable(ContextCompat.getDrawable(binding.root.context, R.drawable.playlist))
+            binding.playlistImage.setImageDrawable(ContextCompat.getDrawable(binding.root.context, R.drawable.playlist /* for test */))
         }
     }
 }
