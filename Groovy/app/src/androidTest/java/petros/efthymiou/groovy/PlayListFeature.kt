@@ -9,6 +9,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.adevinta.android.barista.assertion.BaristaRecyclerViewAssertions.assertRecyclerViewItemCount
 import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertDisplayed
+import com.adevinta.android.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed
 import com.adevinta.android.barista.internal.matcher.DrawableMatcher.Companion.withDrawable
 import org.hamcrest.Description
 import org.hamcrest.Matcher
@@ -19,7 +20,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class aPlayListFeature {
+class PlayListFeature {
     @get:Rule
     val activityRule = ActivityScenarioRule(MainActivity::class.java)
 
@@ -42,9 +43,32 @@ class aPlayListFeature {
             .check(matches(isDisplayed()))
 
         onView(allOf(withId(R.id.playlist_image), isDescendantOfA(nthChildOf(withId(R.id.playlists_list), 0))))
-            .check(matches(withDrawable(R.drawable.playlist)))
+            .check(matches(withDrawable(R.drawable.rock)))
+            .check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun displayLoaderWhileFetchingThePlaylist() {
+        assertDisplayed(R.id.loader)
+    }
+
+    @Test
+    fun hidesLoader() {
+        Thread.sleep(4000) // TODO refactor this
+        assertNotDisplayed(R.id.loader)
+    }
+
+    @Test
+    fun displayRockImageForRockListItems() {
+        Thread.sleep(4000) // TODO: refactor this
+
+        onView(allOf(withId(R.id.playlist_image), isDescendantOfA(nthChildOf(withId(R.id.playlists_list), 0))))
+            .check(matches(withDrawable(R.drawable.rock)))
             .check(matches(isDisplayed()))
 
+        onView(allOf(withId(R.id.playlist_image), isDescendantOfA(nthChildOf(withId(R.id.playlists_list), 3))))
+            .check(matches(withDrawable(R.drawable.rock)))
+            .check(matches(isDisplayed()))
     }
 
     private fun nthChildOf(parentMatcher: Matcher<View>, childPosition: Int): Matcher<View> {

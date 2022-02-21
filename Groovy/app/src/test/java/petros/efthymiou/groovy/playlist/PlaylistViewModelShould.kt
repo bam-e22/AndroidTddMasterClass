@@ -10,6 +10,7 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import petros.efthymiou.groovy.utils.BaseUnitTest
+import petros.efthymiou.groovy.utils.captureValues
 import petros.efthymiou.groovy.utils.getValueForTest
 
 class PlaylistViewModelShould : BaseUnitTest() {
@@ -35,14 +36,39 @@ class PlaylistViewModelShould : BaseUnitTest() {
 
     @Test
     fun emitErrorWhenReceiveError() {
-        runBlockingTest {
-            whenever(repository.getPlayLists()).thenReturn(flow {
-                emit(Result.failure(exception))
-            })
-        }
-        val viewModel = PlaylistViewModel(repository)
+        val viewModel = mockFailureCase()
 
         assertEquals(exception, viewModel.playlists.getValueForTest()?.exceptionOrNull())
+    }
+
+    @Test
+    fun showSpinnerWhileLoading() = runBlockingTest {
+        val viewModel = mockSuccessfulCase()
+
+        viewModel.loader.captureValues {
+            viewModel.playlists.getValueForTest()
+            assertEquals(true, values[0])
+        }
+    }
+
+    @Test
+    fun closeLoaderAfterPlaylistsLoad() = runBlockingTest {
+        val viewModel = mockSuccessfulCase()
+
+        viewModel.loader.captureValues {
+            viewModel.playlists.getValueForTest()
+            assertEquals(false, values.last())
+        }
+    }
+
+    @Test
+    fun closeLoaderAfterError() = runBlockingTest {
+        val viewModel = mockFailureCase()
+
+        viewModel.loader.captureValues {
+            viewModel.playlists.getValueForTest()
+            assertEquals(false, values.last())
+        }
     }
 
     // 테스트 대상을 제외한 것들은 모두 mock
@@ -56,4 +82,15 @@ class PlaylistViewModelShould : BaseUnitTest() {
         }
         return PlaylistViewModel(repository) // 테스트 대상을 제외한 것들은 모두 mock
     }
+
+    private fun mockFailureCase(): PlaylistViewModel {
+        runBlockingTest {
+            whenever(repository.getPlayLists()).thenReturn(flow {
+                emit(Result.failure(exception))
+            })
+        }
+        val viewModel = PlaylistViewModel(repository)
+        return viewModel
+    }
+
 }
