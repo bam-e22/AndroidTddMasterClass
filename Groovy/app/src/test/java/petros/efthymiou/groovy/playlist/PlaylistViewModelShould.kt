@@ -42,7 +42,7 @@ class PlaylistViewModelShould : BaseUnitTest() {
     }
 
     @Test
-    fun showSpinnerWhileLoading() = runBlockingTest {
+    fun showLoaderWhileLoading() = runBlockingTest {
         val viewModel = mockSuccessfulCase()
 
         viewModel.loader.captureValues {
@@ -89,8 +89,7 @@ class PlaylistViewModelShould : BaseUnitTest() {
                 emit(Result.failure(exception))
             })
         }
-        val viewModel = PlaylistViewModel(repository)
-        return viewModel
+        return PlaylistViewModel(repository)
     }
 
 }

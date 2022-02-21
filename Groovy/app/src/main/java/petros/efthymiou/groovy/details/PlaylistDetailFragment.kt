@@ -7,7 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import petros.efthymiou.groovy.R
 import petros.efthymiou.groovy.databinding.FragmentPlaylistDetailBinding
 import javax.inject.Inject
 
@@ -33,6 +35,15 @@ class PlaylistDetailFragment : Fragment() {
             if (playlistDetail.getOrNull() != null) {
                 binding.playlistName.text = playlistDetail.getOrNull()!!.name
                 binding.playlistDetails.text = playlistDetail.getOrNull()!!.details
+            } else {
+                Snackbar.make(binding.playlistsDetailRoot, R.string.generic_error, Snackbar.LENGTH_LONG).show()
+            }
+        }
+
+        viewModel.loader.observe(viewLifecycleOwner) { loading ->
+            when (loading) {
+                true -> binding.detailsLoader.visibility = View.VISIBLE
+                false -> binding.detailsLoader.visibility = View.GONE
             }
         }
 

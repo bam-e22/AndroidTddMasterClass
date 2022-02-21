@@ -3,12 +3,14 @@ package petros.efthymiou.groovy.details
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runBlockingTest
+import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito.times
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import petros.efthymiou.groovy.utils.BaseUnitTest
+import petros.efthymiou.groovy.utils.captureValues
 import petros.efthymiou.groovy.utils.getValueForTest
 
 /**
@@ -20,7 +22,7 @@ import petros.efthymiou.groovy.utils.getValueForTest
  *
  */
 class PlaylistDetailViewModelShould : BaseUnitTest() {
-    lateinit var viewModel: PlaylistDetailViewModel
+    private lateinit var viewModel: PlaylistDetailViewModel
     private val id = "1"
     private val service: PlaylistDetailService = mock()
     private val playlistDetail: PlaylistDetail = mock()
@@ -46,8 +48,27 @@ class PlaylistDetailViewModelShould : BaseUnitTest() {
     @Test
     fun emitErrorWhenServiceFails() = runBlockingTest {
         mockFailureCase()
-        viewModel.getPlaylistDetail(id)
         assertEquals(error, viewModel.playlistDetail.getValueForTest())
+    }
+
+    @Test
+    fun showLoaderWhileLoading() = runBlockingTest {
+        mockSuccessfulCase()
+        viewModel.loader.captureValues {
+            viewModel.getPlaylistDetail(id)
+            viewModel.playlistDetail.getValueForTest()
+            Assert.assertEquals(true, values[0])
+        }
+    }
+
+    @Test
+    fun closeLoaderAfterPlaylistDetailLoad() = runBlockingTest {
+        mockSuccessfulCase()
+        viewModel.loader.captureValues {
+            viewModel.getPlaylistDetail(id)
+            viewModel.playlistDetail.getValueForTest()
+            Assert.assertEquals(false, values.last())
+        }
     }
 
     private suspend fun mockFailureCase() {
@@ -57,6 +78,7 @@ class PlaylistDetailViewModelShould : BaseUnitTest() {
             }
         )
         viewModel = PlaylistDetailViewModel(service)
+        viewModel.getPlaylistDetail(id)
     }
 
     private suspend fun mockSuccessfulCase() {
