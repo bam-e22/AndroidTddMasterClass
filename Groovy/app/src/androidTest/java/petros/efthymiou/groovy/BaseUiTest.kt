@@ -3,17 +3,22 @@ package petros.efthymiou.groovy
 import android.view.View
 import android.view.ViewGroup
 import androidx.test.espresso.IdlingRegistry
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.runner.RunWith
 import petros.efthymiou.groovy.playlist.idlingResource
 
 @RunWith(AndroidJUnit4::class)
 abstract class BaseUiTest {
+    @get:Rule
+    val activityRule = ActivityScenarioRule(MainActivity::class.java)
+
     @Before
     fun setup() {
         IdlingRegistry.getInstance().register(idlingResource)
