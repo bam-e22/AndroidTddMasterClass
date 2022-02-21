@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import petros.efthymiou.groovy.databinding.FragmentPlaylistBinding
@@ -26,7 +27,10 @@ class PlaylistFragment : Fragment() {
         setupViewModel()
 
         val binding = FragmentPlaylistBinding.inflate(inflater, container, false)
-        recyclerViewAdapter = MyPlaylistRecyclerViewAdapter()
+        recyclerViewAdapter = MyPlaylistRecyclerViewAdapter(listener = { id ->
+            val action = PlaylistFragmentDirections.actionPlaylistFragmentToPlaylistDetailFragment(id)
+            findNavController().navigate(action)
+        })
         with(binding.playlistsList) {
             layoutManager = LinearLayoutManager(context)
             adapter = recyclerViewAdapter
